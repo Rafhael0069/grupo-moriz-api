@@ -22,7 +22,7 @@ app.post("/new-silo", async (req, res) => {
       },
     });
 
-    console.log("Novo silo criado:", newSilo);
+    // console.log("Novo silo criado:", newSilo);
 
     res.status(201).json({
       message: "Novo silo criado com sucesso.",
@@ -34,20 +34,20 @@ app.post("/new-silo", async (req, res) => {
     res.status(500).json({ erro: "Erro ao criar o silo no banco de dados." });
   }
 });
-""
+
 app.post("/sensor", async (req, res) => {
   const { sensor_value, id } = req.body;
 
   try {
     const newReading = await prisma.silo.update({
-      where: { id },
+      where: { id: id },
       data: {
         sensor_value: sensor_value,
         dt_register: new Date(),
       },
     });
 
-    console.log("Leitura salva no banco:", newReading);
+    // console.log("Leitura salva no banco:", newReading);
 
     res.status(201).json({
       message: "Leitura salva com sucesso.",
