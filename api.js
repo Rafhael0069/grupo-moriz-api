@@ -67,6 +67,7 @@ app.get("/silos", async (req, res) => {
 
     const silos = await prisma.silo.findMany();
     const resultadoFormatado = silos.map((silo) => ({
+      id: silo.id,
       silo_name: silo.silo_name,
       sensor_value: silo.sensor_value,
       percentage_value: getPercentage(silo.sensor_value),
