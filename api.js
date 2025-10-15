@@ -40,7 +40,7 @@ app.post("/sensor", async (req, res) => {
 
   try {
     const newReading = await prisma.silo.update({
-      where: { id: id },
+      where: { id: parseFloat(id) },
       data: {
       sensor_value: parseFloat(sensor_value),
       dt_register: new Date(),
