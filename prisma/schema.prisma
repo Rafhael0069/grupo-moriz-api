@@ -13,9 +13,86 @@ datasource grupoMorizDB {
   url      = env("DATABASE_URL")
 }
 
-model silo {
-  id              Int      @id @default(autoincrement())
-  silo_name       String   @default("----")
-  sensor_value    Float    @default(0)
-  dt_register     DateTime @default(now())
+// model silo {
+//   id              Int      @id @default(autoincrement())
+//   silo_name       String   @default("----")
+//   sensor_value    Float    @default(0)
+//   dt_register     DateTime @default(now())
+// }
+
+
+// ======================
+// Barn (Galpão)
+// ======================
+model Barn {
+  id                     Int                    @id @default(autoincrement())
+  name                   String
+
+  // 1:1 relationships
+  silo                   Silo?                  @relation(fields: [siloId], references: [id])
+  siloId                 Int?                   @unique
+
+  environmentalMetrics   EnvironmentalMetrics?  @relation(fields: [environmentalMetricsId], references: [id])
+  environmentalMetricsId Int?                   @unique
+
+  @@map("barn")
+}
+
+// ======================
+// Silo
+// ======================
+model Silo {
+  id          Int             @id @default(autoincrement())
+  name        String
+  sensorCode  String
+  barn        Barn?           @relation
+
+  // 1:N relationship with SiloLevelData
+  levelData   SiloLevelData[]
+
+  @@map("silo")
+}
+
+// ======================
+// Silo Level Data (Histórico do Silo)
+// ======================
+model SiloLevelData {
+  id         BigInt     @id @default(autoincrement())
+  levelValue Decimal
+  timestamp  DateTime   @default(now())
+
+  siloId     Int
+  silo       Silo       @relation(fields: [siloId], references: [id], onDelete: Cascade)
+
+  @@map("silo_level_data")
+}
+
+// ======================
+// Environmental Metrics (Unidade Ambiental)
+// ======================
+model EnvironmentalMetrics {
+  id          Int                  @id @default(autoincrement())
+  name        String
+  sensorCode  String
+  barn        Barn?                @relation
+
+  // 1:N relationship with EnvironmentalData
+  data        EnvironmentalData[]
+
+  @@map("environmental_metrics")
+}
+
+// ======================
+// Environmental Data (Histórico Ambiental)
+// ======================
+model EnvironmentalData {
+  id          BigInt                @id @default(autoincrement())
+  temperature Decimal
+  humidity    Decimal
+  timestamp   DateTime              @default(now())
+
+  metricsId   Int
+  metrics     EnvironmentalMetrics  @relation(fields: [metricsId], references: [id], onDelete: Cascade)
+
+  @@map("environmental_data")
 }
